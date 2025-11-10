@@ -6,7 +6,7 @@ export interface TextNode {
 
 export interface TagNode {
 	type: 'tag';
-	key: Omit<TextNode, 'quoted'>;
+	key: string;
 	value: TextNode;
 }
 
@@ -88,7 +88,7 @@ export function parse(input: string): ParseResult {
 			const key = input.slice(last, s.index);
 			nodes.push({
 				type: 'tag',
-				key: { type: 'text', value: key },
+				key,
 				value: { type: 'text', value: '', quoted: false },
 			});
 			last = null;

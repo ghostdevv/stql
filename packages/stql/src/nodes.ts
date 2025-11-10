@@ -25,7 +25,7 @@ export function createTagNode(key: string, value: string): TagNode {
 
 	return {
 		type: 'tag',
-		key: { type: 'text', value: key },
+		key,
 		value: createTextNode(value),
 	};
 }

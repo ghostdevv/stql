@@ -40,7 +40,7 @@ describe('createTagNode', () => {
 		const node = createTagNode('key', 'value');
 		expect(node).toEqual({
 			type: 'tag',
-			key: { type: 'text', value: 'key' },
+			key: 'key',
 			value: { type: 'text', value: 'value', quoted: false },
 		});
 	});
@@ -49,7 +49,7 @@ describe('createTagNode', () => {
 		const node = createTagNode('key', 'value with space');
 		expect(node).toEqual({
 			type: 'tag',
-			key: { type: 'text', value: 'key' },
+			key: 'key',
 			value: { type: 'text', value: 'value with space', quoted: true },
 		});
 	});

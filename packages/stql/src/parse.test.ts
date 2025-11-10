@@ -93,7 +93,7 @@ describe('parser', () => {
 			nodes: [
 				{
 					type: 'tag',
-					key: { type: 'text', value: 'foo' },
+					key: 'foo',
 					value: { type: 'text', value: 'bar', quoted: false },
 				},
 			],
@@ -106,7 +106,7 @@ describe('parser', () => {
 			nodes: [
 				{
 					type: 'tag',
-					key: { type: 'text', value: 'foo' },
+					key: 'foo',
 					value: { type: 'text', value: 'bar', quoted: true },
 				},
 			],
@@ -126,7 +126,7 @@ describe('parser', () => {
 			nodes: [
 				{
 					type: 'tag',
-					key: { type: 'text', value: 'key' },
+					key: 'key',
 					value: { type: 'text', value: '', quoted: false },
 				},
 			],
@@ -139,7 +139,7 @@ describe('parser', () => {
 			nodes: [
 				{
 					type: 'tag',
-					key: { type: 'text', value: 'key' },
+					key: 'key',
 					value: { type: 'text', value: '', quoted: false },
 				},
 				{ type: 'text', value: ' value', quoted: false },
@@ -152,17 +152,17 @@ describe('parser', () => {
 	// 	expect(result).toMatchObject([
 	// 		{
 	// 			type: 'tag',
-	// 			key: { type: 'text', value: 'a' },
+	// 			key: 'a',
 	// 			value: { type: 'text', value: '1', quoted: false },
 	// 		},
 	// 		{
 	// 			type: 'tag',
-	// 			key: { type: 'text', value: 'b' },
+	// 			key: 'b',
 	// 			value: { type: 'text', value: '2', quoted: false },
 	// 		},
 	// 		{
 	// 			type: 'tag',
-	// 			key: { type: 'text', value: 'c' },
+	// 			key: 'c',
 	// 			value: { type: 'text', value: '3', quoted: false },
 	// 		},
 	// 	]);

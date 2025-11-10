@@ -37,6 +37,6 @@ export function print(result: ParseResult) {
 				previousNode?.type === 'text' &&
 				!endsWithWhitespace(previousNode.value));
 
-		return `${result}${requiresExtraWhitespace ? ' ' : ''}${node.type === 'text' ? printText(node) : `${node.key.value}:${printText(node.value)}`}`;
+		return `${result}${requiresExtraWhitespace ? ' ' : ''}${node.type === 'text' ? printText(node) : `${node.key}:${printText(node.value)}`}`;
 	}, '');
 }
