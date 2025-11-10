@@ -3,3 +3,4 @@ export type { Node, TagNode, TextNode, ParseResult } from './parse';
 export { print } from './print';
 export { createTagNode, createTextNode } from './nodes';
 export { repair } from './repair';
+export { collect, type CollectionResult } from './collect';
