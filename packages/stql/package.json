@@ -25,6 +25,11 @@
 		"vitest": "^4.0.8"
 	},
 	"license": "MIT",
+	"repository": {
+		"url": "https://github.com/ghostdevv/stql",
+		"directory": "packages/stql",
+		"type": "git"
+	},
 	"engines": {
 		"node": ">=22"
 	}
