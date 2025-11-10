@@ -24,7 +24,22 @@ function endsWithWhitespace(str: string) {
 	return false;
 }
 
-export function print(result: ParseResult) {
+/**
+ * Print (turn into a string) parsed stql nodes.
+ *
+ * stql was designed such that you can recursively parse/print
+ * without loosing/gaining any information. That means that the
+ * printed string can be parsed back into the same AST.
+ *
+ * There is only one exception to this currently. If you manually
+ * construct/manipulate the tree, you may end up in an un-parsable
+ * case. For example, if you have two adjacent tag nodes without
+ * a whitespace bookend-ed node between them.
+ *
+ * @param result the stql parse result
+ * @returns the string-ified tree
+ */
+export function print(result: ParseResult): string {
 	return result.nodes.reduce((result, node, index, nodes) => {
 		const previousNode = index === 0 ? null : nodes.at(index - 1);
 
