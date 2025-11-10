@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"module": "esnext",
+		"target": "ESNext",
+		"moduleResolution": "bundler",
+		"noImplicitAny": true,
+		"resolveJsonModule": true,
+		"strictBindCallApply": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": true,
+		"strictNullChecks": true,
+		"sourceMap": false,
+		"noEmit": true,
+		"verbatimModuleSyntax": true
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules/**"]
+}
