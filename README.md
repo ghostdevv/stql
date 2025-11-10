@@ -1,1 +1,1 @@
-# qlang monorepo
+# stql monorepo

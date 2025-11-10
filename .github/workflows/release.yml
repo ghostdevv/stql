@@ -7,7 +7,7 @@ on:
 
 jobs:
     release:
-        if: github.repository == 'ghostdevv/qlang'
+        if: github.repository == 'ghostdevv/stql'
         name: Release
         runs-on: ubuntu-latest
         permissions:
