@@ -1,13 +1,13 @@
-import { WHITESPACE, type TagNode, type Node } from './parse';
+import { WHITESPACE, type TagNode, type ParseResult } from './parse';
 
 type PushBehaviour = 'replace' | 'append' | 'prepend';
 
 export function pushTag(
-	nodes: Node[],
+	result: ParseResult,
 	key: string,
 	value: string,
 	behaviour: PushBehaviour = 'prepend',
-) {
+): ParseResult {
 	if (requiresQuotes(key)) {
 		throw new Error('Key cannot contain whitespace');
 	}
@@ -17,6 +17,8 @@ export function pushTag(
 		key: { type: 'text', value: key },
 		value: { type: 'text', value: value, quoted: requiresQuotes(value) },
 	};
+
+	const nodes = structuredClone(result.nodes);
 
 	switch (behaviour) {
 		case 'replace': {
@@ -37,7 +39,7 @@ export function pushTag(
 			break;
 	}
 
-	return nodes;
+	return { nodes };
 }
 
 export function requiresQuotes(text: string) {

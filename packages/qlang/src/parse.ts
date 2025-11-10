@@ -12,9 +12,13 @@ export interface TagNode {
 
 export type Node = TextNode | TagNode;
 
+export interface ParseResult {
+	nodes: Node[];
+}
+
 export const WHITESPACE = [' ', '\t', '\n', '\r'];
 
-export function parse(input: string) {
+export function parse(input: string): ParseResult {
 	const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
 	const segments = Array.from(segmenter.segment(input));
 	const nodes: Node[] = [];
@@ -97,5 +101,7 @@ export function parse(input: string) {
 
 	pushLast();
 
-	return nodes;
+	return {
+		nodes,
+	};
 }

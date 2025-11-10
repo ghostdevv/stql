@@ -4,138 +4,152 @@ import { parse } from './parse';
 describe('parser', () => {
 	it('understands simple text', () => {
 		const result = parse('hello-world');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello-world', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello-world', quoted: false }],
+		});
 	});
 
 	it('understands spaces', () => {
 		const result = parse('hello world');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello world', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello world', quoted: false }],
+		});
 	});
 
 	it('understands multiple spaces', () => {
 		const result = parse('hello   world');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello   world', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello   world', quoted: false }],
+		});
 	});
 
 	it('understands tabs', () => {
 		const result = parse('hello\tworld');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello\tworld', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello\tworld', quoted: false }],
+		});
 	});
 
 	it('understands quotes', () => {
 		const result = parse('"hello" world');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello', quoted: true },
-			{ type: 'text', value: ' world', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [
+				{ type: 'text', value: 'hello', quoted: true },
+				{ type: 'text', value: ' world', quoted: false },
+			],
+		});
 	});
 
 	it('handles emojis', () => {
 		const result = parse('hello 🤷‍♀️ world');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello 🤷‍♀️ world', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello 🤷‍♀️ world', quoted: false }],
+		});
 	});
 
 	it('handles newlines', () => {
 		const result = parse('hello\nworld');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello\nworld', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello\nworld', quoted: false }],
+		});
 	});
 
 	it('handles complex mix', () => {
 		const result = parse('"hello"   world foo   bar "baz" q');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello', quoted: true },
-			{ type: 'text', value: '   world foo   bar ', quoted: false },
-			{ type: 'text', value: 'baz', quoted: true },
-			{ type: 'text', value: ' q', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [
+				{ type: 'text', value: 'hello', quoted: true },
+				{ type: 'text', value: '   world foo   bar ', quoted: false },
+				{ type: 'text', value: 'baz', quoted: true },
+				{ type: 'text', value: ' q', quoted: false },
+			],
+		});
 	});
 
 	it('handles whitespace in quotes', () => {
 		const result = parse('"hello world"');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello world', quoted: true },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello world', quoted: true }],
+		});
 	});
 
 	it('understands assignment operator', () => {
 		const result = parse('hello = world');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello = world', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello = world', quoted: false }],
+		});
 	});
 
 	it('handles assignment operator in quotes', () => {
 		const result = parse('"hello = world"');
-		expect(result).toEqual([
-			{ type: 'text', value: 'hello = world', quoted: true },
-		]);
+		expect(result).toMatchObject({
+			nodes: [{ type: 'text', value: 'hello = world', quoted: true }],
+		});
 	});
 
 	it('handles simple tags', () => {
 		const result = parse('foo:bar');
-		expect(result).toEqual([
-			{
-				type: 'tag',
-				key: { type: 'text', value: 'foo' },
-				value: { type: 'text', value: 'bar', quoted: false },
-			},
-		]);
+		expect(result).toMatchObject({
+			nodes: [
+				{
+					type: 'tag',
+					key: { type: 'text', value: 'foo' },
+					value: { type: 'text', value: 'bar', quoted: false },
+				},
+			],
+		});
 	});
 
 	it('handles quoted tags', () => {
 		const result = parse('foo:"bar"');
-		expect(result).toEqual([
-			{
-				type: 'tag',
-				key: { type: 'text', value: 'foo' },
-				value: { type: 'text', value: 'bar', quoted: true },
-			},
-		]);
+		expect(result).toMatchObject({
+			nodes: [
+				{
+					type: 'tag',
+					key: { type: 'text', value: 'foo' },
+					value: { type: 'text', value: 'bar', quoted: true },
+				},
+			],
+		});
 	});
 
 	it('handles empty input', () => {
 		const result = parse('');
-		expect(result).toEqual([]);
+		expect(result).toMatchObject({
+			nodes: [],
+		});
 	});
 
 	it('handles tag with missing value', () => {
 		const result = parse('key:');
-		expect(result).toEqual([
-			{
-				type: 'tag',
-				key: { type: 'text', value: 'key' },
-				value: { type: 'text', value: '', quoted: false },
-			},
-		]);
+		expect(result).toMatchObject({
+			nodes: [
+				{
+					type: 'tag',
+					key: { type: 'text', value: 'key' },
+					value: { type: 'text', value: '', quoted: false },
+				},
+			],
+		});
 	});
 
 	it('handles tag with missing value but adjacent text node', () => {
 		const result = parse('key: value');
-		expect(result).toEqual([
-			{
-				type: 'tag',
-				key: { type: 'text', value: 'key' },
-				value: { type: 'text', value: '', quoted: false },
-			},
-			{ type: 'text', value: ' value', quoted: false },
-		]);
+		expect(result).toMatchObject({
+			nodes: [
+				{
+					type: 'tag',
+					key: { type: 'text', value: 'key' },
+					value: { type: 'text', value: '', quoted: false },
+				},
+				{ type: 'text', value: ' value', quoted: false },
+			],
+		});
 	});
 
 	// it('handles consecutive tags', () => {
 	// 	const result = parse('a:1b:2c:3');
-	// 	expect(result).toEqual([
+	// 	expect(result).toMatchObject([
 	// 		{
 	// 			type: 'tag',
 	// 			key: { type: 'text', value: 'a' },

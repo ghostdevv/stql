@@ -13,7 +13,7 @@ describe('pushTag', () => {
 	it('adds a new tag with prepend behaviour', () => {
 		const nodes = parse('foo:bar');
 		const result = pushTag(nodes, 'new', 'val');
-		expect(result[0]).toEqual({
+		expect(result.nodes[0]).toEqual({
 			type: 'tag',
 			key: { type: 'text', value: 'new' },
 			value: { type: 'text', value: 'val', quoted: false },
@@ -23,7 +23,7 @@ describe('pushTag', () => {
 	it('adds a new tag with append behaviour', () => {
 		const nodes = parse('foo:bar');
 		const result = pushTag(nodes, 'new', 'val', 'append');
-		const last = result[result.length - 1];
+		const last = result.nodes[result.nodes.length - 1];
 		expect(last).toEqual({
 			type: 'tag',
 			key: { type: 'text', value: 'new' },
@@ -34,8 +34,8 @@ describe('pushTag', () => {
 	it('replaces existing tag when behaviour is replace', () => {
 		const nodes = parse('foo:old');
 		const result = pushTag(nodes, 'foo', 'new', 'replace');
-		expect(result).toHaveLength(1);
-		expect(result[0]).toEqual({
+		expect(result.nodes).toHaveLength(1);
+		expect(result.nodes[0]).toEqual({
 			type: 'tag',
 			key: { type: 'text', value: 'foo' },
 			value: { type: 'text', value: 'new', quoted: false },
@@ -46,7 +46,7 @@ describe('pushTag', () => {
 		const nodes = parse('');
 		const result = pushTag(nodes, 'key', 'needs quote', 'prepend');
 		// @ts-expect-error isn't narrowed
-		expect(result[0].value?.quoted).toBe(true);
+		expect(result.nodes[0].value?.quoted).toBe(true);
 	});
 });
 
