@@ -5,81 +5,81 @@ describe('parser', () => {
 	it('understands simple text', () => {
 		const result = parse('hello-world');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello-world', quoted: false },
+			{ type: 'text', value: 'hello-world', quoted: false },
 		]);
 	});
 
 	it('understands spaces', () => {
 		const result = parse('hello world');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello world', quoted: false },
+			{ type: 'text', value: 'hello world', quoted: false },
 		]);
 	});
 
 	it('understands multiple spaces', () => {
 		const result = parse('hello   world');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello   world', quoted: false },
+			{ type: 'text', value: 'hello   world', quoted: false },
 		]);
 	});
 
 	it('understands tabs', () => {
 		const result = parse('hello\tworld');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello\tworld', quoted: false },
+			{ type: 'text', value: 'hello\tworld', quoted: false },
 		]);
 	});
 
 	it('understands quotes', () => {
 		const result = parse('"hello" world');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello', quoted: true },
-			{ type: 'text', literal: ' world', quoted: false },
+			{ type: 'text', value: 'hello', quoted: true },
+			{ type: 'text', value: ' world', quoted: false },
 		]);
 	});
 
 	it('handles emojis', () => {
 		const result = parse('hello 🤷‍♀️ world');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello 🤷‍♀️ world', quoted: false },
+			{ type: 'text', value: 'hello 🤷‍♀️ world', quoted: false },
 		]);
 	});
 
 	it('handles newlines', () => {
 		const result = parse('hello\nworld');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello\nworld', quoted: false },
+			{ type: 'text', value: 'hello\nworld', quoted: false },
 		]);
 	});
 
 	it('handles complex mix', () => {
 		const result = parse('"hello"   world foo   bar "baz" q');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello', quoted: true },
-			{ type: 'text', literal: '   world foo   bar ', quoted: false },
-			{ type: 'text', literal: 'baz', quoted: true },
-			{ type: 'text', literal: ' q', quoted: false },
+			{ type: 'text', value: 'hello', quoted: true },
+			{ type: 'text', value: '   world foo   bar ', quoted: false },
+			{ type: 'text', value: 'baz', quoted: true },
+			{ type: 'text', value: ' q', quoted: false },
 		]);
 	});
 
 	it('handles whitespace in quotes', () => {
 		const result = parse('"hello world"');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello world', quoted: true },
+			{ type: 'text', value: 'hello world', quoted: true },
 		]);
 	});
 
 	it('understands assignment operator', () => {
 		const result = parse('hello = world');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello = world', quoted: false },
+			{ type: 'text', value: 'hello = world', quoted: false },
 		]);
 	});
 
 	it('handles assignment operator in quotes', () => {
 		const result = parse('"hello = world"');
 		expect(result).toEqual([
-			{ type: 'text', literal: 'hello = world', quoted: true },
+			{ type: 'text', value: 'hello = world', quoted: true },
 		]);
 	});
 
@@ -88,8 +88,8 @@ describe('parser', () => {
 		expect(result).toEqual([
 			{
 				type: 'tag',
-				key: { type: 'text', literal: 'foo' },
-				value: { type: 'text', literal: 'bar', quoted: false },
+				key: { type: 'text', value: 'foo' },
+				value: { type: 'text', value: 'bar', quoted: false },
 			},
 		]);
 	});
@@ -99,8 +99,8 @@ describe('parser', () => {
 		expect(result).toEqual([
 			{
 				type: 'tag',
-				key: { type: 'text', literal: 'foo' },
-				value: { type: 'text', literal: 'bar', quoted: true },
+				key: { type: 'text', value: 'foo' },
+				value: { type: 'text', value: 'bar', quoted: true },
 			},
 		]);
 	});
@@ -115,21 +115,21 @@ describe('parser', () => {
 		expect(result).toEqual([
 			{
 				type: 'tag',
-				key: { type: 'text', literal: 'key' },
-				value: { type: 'text', literal: '', quoted: false },
+				key: { type: 'text', value: 'key' },
+				value: { type: 'text', value: '', quoted: false },
 			},
 		]);
 	});
 
-	it('handles tag with missing value but adjacent text token', () => {
+	it('handles tag with missing value but adjacent text node', () => {
 		const result = parse('key: value');
 		expect(result).toEqual([
 			{
 				type: 'tag',
-				key: { type: 'text', literal: 'key' },
-				value: { type: 'text', literal: '', quoted: false },
+				key: { type: 'text', value: 'key' },
+				value: { type: 'text', value: '', quoted: false },
 			},
-			{ type: 'text', literal: ' value', quoted: false },
+			{ type: 'text', value: ' value', quoted: false },
 		]);
 	});
 
@@ -138,18 +138,18 @@ describe('parser', () => {
 	// 	expect(result).toEqual([
 	// 		{
 	// 			type: 'tag',
-	// 			key: { type: 'text', literal: 'a' },
-	// 			value: { type: 'text', literal: '1', quoted: false },
+	// 			key: { type: 'text', value: 'a' },
+	// 			value: { type: 'text', value: '1', quoted: false },
 	// 		},
 	// 		{
 	// 			type: 'tag',
-	// 			key: { type: 'text', literal: 'b' },
-	// 			value: { type: 'text', literal: '2', quoted: false },
+	// 			key: { type: 'text', value: 'b' },
+	// 			value: { type: 'text', value: '2', quoted: false },
 	// 		},
 	// 		{
 	// 			type: 'tag',
-	// 			key: { type: 'text', literal: 'c' },
-	// 			value: { type: 'text', literal: '3', quoted: false },
+	// 			key: { type: 'text', value: 'c' },
+	// 			value: { type: 'text', value: '3', quoted: false },
 	// 		},
 	// 	]);
 	// });

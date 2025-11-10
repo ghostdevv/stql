@@ -1,9 +1,9 @@
-import { WHITESPACE, type TagToken, type Token } from './parse';
+import { WHITESPACE, type TagNode, type Node } from './parse';
 
 type PushBehaviour = 'replace' | 'append' | 'prepend';
 
 export function pushTag(
-	tokens: Token[],
+	nodes: Node[],
 	key: string,
 	value: string,
 	behaviour: PushBehaviour = 'prepend',
@@ -12,32 +12,32 @@ export function pushTag(
 		throw new Error('Key cannot contain whitespace');
 	}
 
-	const newToken: TagToken = {
+	const newNode: TagNode = {
 		type: 'tag',
-		key: { type: 'text', literal: key },
-		value: { type: 'text', literal: value, quoted: requiresQuotes(value) },
+		key: { type: 'text', value: key },
+		value: { type: 'text', value: value, quoted: requiresQuotes(value) },
 	};
 
 	switch (behaviour) {
 		case 'replace': {
-			const current = tokens.findIndex(
-				(token) => token.type === 'tag' && token.key.literal === key,
+			const current = nodes.findIndex(
+				(node) => node.type === 'tag' && node.key.value === key,
 			);
 
-			tokens[current] = newToken;
+			nodes[current] = newNode;
 			break;
 		}
 
 		case 'append':
-			tokens.push(newToken);
+			nodes.push(newNode);
 			break;
 
 		case 'prepend':
-			tokens.unshift(newToken);
+			nodes.unshift(newNode);
 			break;
 	}
 
-	return tokens;
+	return nodes;
 }
 
 export function requiresQuotes(text: string) {

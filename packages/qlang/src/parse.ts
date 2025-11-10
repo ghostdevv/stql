@@ -1,37 +1,37 @@
-export type TextToken = {
+export interface TextNode {
 	type: 'text';
-	literal: string;
+	value: string;
 	quoted: boolean;
-};
+}
 
-export type TagToken = {
+export interface TagNode {
 	type: 'tag';
-	key: Omit<TextToken, 'quoted'>;
-	value: TextToken;
-};
+	key: Omit<TextNode, 'quoted'>;
+	value: TextNode;
+}
 
-export type Token = TextToken | TagToken;
+export type Node = TextNode | TagNode;
 
 export const WHITESPACE = [' ', '\t', '\n', '\r'];
 
 export function parse(input: string) {
 	const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
 	const segments = Array.from(segmenter.segment(input));
-	const tokens: Token[] = [];
+	const nodes: Node[] = [];
 
 	let last: number | null = null;
 	let quoted = false;
 	let tag = false;
 
 	function pushText(text: string, quoted: boolean) {
-		const lastToken = tokens.at(-1);
+		const lastNode = nodes.at(-1);
 
-		if (lastToken?.type === 'text' && !(quoted || lastToken.quoted)) {
-			lastToken.literal += text;
+		if (lastNode?.type === 'text' && !(quoted || lastNode.quoted)) {
+			lastNode.value += text;
 		} else {
-			tokens.push({
+			nodes.push({
 				type: 'text',
-				literal: text,
+				value: text,
 				quoted,
 			});
 		}
@@ -40,10 +40,10 @@ export function parse(input: string) {
 	function pushLast(current?: number, quoted = false) {
 		if (last !== null) {
 			const text = input.slice(last, current);
-			const lastToken = tokens.at(-1);
+			const lastNode = nodes.at(-1);
 
-			if (lastToken?.type === 'tag' && tag) {
-				lastToken.value = { type: 'text', literal: text, quoted };
+			if (lastNode?.type === 'tag' && tag) {
+				lastNode.value = { type: 'text', value: text, quoted };
 				tag = false;
 			} else {
 				pushText(text, quoted);
@@ -82,10 +82,10 @@ export function parse(input: string) {
 
 		if (s.segment === ':' && last !== null && !quoted) {
 			const key = input.slice(last, s.index);
-			tokens.push({
+			nodes.push({
 				type: 'tag',
-				key: { type: 'text', literal: key },
-				value: { type: 'text', literal: '', quoted: false },
+				key: { type: 'text', value: key },
+				value: { type: 'text', value: '', quoted: false },
 			});
 			last = null;
 			tag = true;
@@ -97,5 +97,5 @@ export function parse(input: string) {
 
 	pushLast();
 
-	return tokens;
+	return nodes;
 }

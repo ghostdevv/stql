@@ -1,13 +1,13 @@
-import type { TextToken, Token } from './parse';
+import type { TextNode, Node } from './parse';
 
-function printText(text: TextToken) {
-	return text.quoted ? `"${text.literal}"` : text.literal;
+function printText(text: TextNode) {
+	return text.quoted ? `"${text.value}"` : text.value;
 }
 
-export function print(tokens: Token[]) {
-	return tokens.reduce(
-		(result, token) =>
-			`${result}${token.type === 'text' ? printText(token) : `${token.key.literal}:${printText(token.value)}`}`,
+export function print(nodes: Node[]) {
+	return nodes.reduce(
+		(result, node) =>
+			`${result}${node.type === 'text' ? printText(node) : `${node.key.value}:${printText(node.value)}`}`,
 		'',
 	);
 }
