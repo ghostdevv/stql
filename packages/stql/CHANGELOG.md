@@ -1,5 +1,13 @@
 # stql
 
+## 0.3.0
+
+### Minor Changes
+
+- feat: add repair fn ([`7afe085`](https://github.com/ghostdevv/stql/commit/7afe085c43a8d495723d9c49f846407ef4e28b84))
+
+- breaking: print will no longer repair for you ([`d2a602f`](https://github.com/ghostdevv/stql/commit/d2a602f1bd2fd66879daa9ce7e666e3cf615674e))
+
 ## 0.2.0
 
 ### Minor Changes
