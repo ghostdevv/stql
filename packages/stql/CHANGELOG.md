@@ -1,5 +1,11 @@
 # stql
 
+## 0.3.1
+
+### Patch Changes
+
+- feat: add collect fn ([`d65fad7`](https://github.com/ghostdevv/stql/commit/d65fad7fef452328c36ee6067d69ea7540dde314))
+
 ## 0.3.0
 
 ### Minor Changes
