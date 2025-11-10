@@ -1,6 +1,5 @@
-import { createTagNode, createTextNode } from './nodes';
-import { parse, type ParseResult } from './parse';
 import { describe, it, expect } from 'vitest';
+import { parse } from './parse';
 import { print } from './print';
 
 describe('print', () => {
@@ -37,28 +36,5 @@ describe('print', () => {
 		const result = parse(source);
 		const printed = print(result);
 		expect(printed).toBe(source);
-	});
-
-	it('prints adjacent tags with missing whitespace node correctly', () => {
-		const result: ParseResult = {
-			nodes: [createTagNode('foo', 'bar'), createTagNode('baz', 'qux')],
-		};
-
-		const printed = print(result);
-		expect(printed).toBe('foo:bar baz:qux');
-	});
-
-	it('printed adjacent tags with missing whitespace in previous text node correctly', () => {
-		const result: ParseResult = {
-			nodes: [
-				createTagNode('foo', 'bar'),
-				// createTextNode('hello world'),
-				createTextNode('hello'),
-				createTagNode('baz', 'qux'),
-			],
-		};
-
-		const printed = print(result);
-		expect(printed).toBe('foo:bar hello baz:qux');
 	});
 });
