@@ -37,22 +37,11 @@
 			}
 		}
 	},
-	"html": {
-		"experimentalFullSupportEnabled": true
-	},
 	"overrides": [
 		{
 			"includes": ["**/*.svelte"],
 			"linter": {
-				"rules": {
-					"style": {
-						"useConst": "off"
-					},
-					"correctness": {
-						"noUnusedImports": "off",
-						"noSelfAssign": "off"
-					}
-				}
+				"enabled": false
 			}
 		}
 	]
