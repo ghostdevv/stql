@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Codemirror from '$lib/codemirror/Codemirror.svelte';
+	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import Terminal from './Terminal.svelte';
 	import { Runner } from './runner.svelte';
 	import { onDestroy } from 'svelte';
@@ -25,19 +26,43 @@
 </script>
 
 <div class="playground">
-	<Codemirror bind:value={code} />
-	<!-- <Codemirror terminal value={terminalContent} /> -->
-	<Terminal stream={runner.terminalStream} />
+	<PaneGroup direction="horizontal">
+		<Pane defaultSize={50} collapsible minSize={10}>
+			<Codemirror bind:value={code} />
+		</Pane>
+		<PaneResizer />
+		<Pane defaultSize={50} collapsible minSize={10}>
+			<Terminal stream={runner.terminalStream} />
+		</Pane>
+	</PaneGroup>
 </div>
 
 <style>
 	.playground {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: 1fr;
-		gap: 12px;
+		display: contents;
 
-		height: 100%;
-		max-height: 500px;
+		:global([data-pane-resizer]) {
+			width: 12px;
+			position: relative;
+
+			&:after {
+				content: '';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+
+				display: block;
+				width: 6px;
+				height: 32px;
+
+				border-radius: 12px;
+				background-color: var(--background-tertiary);
+			}
+		}
+
+		:global([data-pane]) {
+			max-height: 500px;
+		}
 	}
 </style>

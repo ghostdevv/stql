@@ -100,5 +100,6 @@
 		height: 100%;
 		overflow: auto;
 		position: relative;
+		border-radius: 12px;
 	}
 </style>

@@ -52,13 +52,14 @@
 			terminal.loadAddon(fitAddon);
 
 			terminal.open(node);
-			resize();
+			fitAddon.fit();
 
 			function resize() {
 				fitAddon.fit();
 			}
 
-			node.addEventListener('resize', resize);
+			const resizeObserver = new ResizeObserver(resize);
+			resizeObserver.observe(node);
 
 			const ABORT_REASON = 'terminal component destroyed';
 			const abortController = new AbortController();
@@ -89,7 +90,7 @@
 				});
 
 			return () => {
-				node.removeEventListener('resize', resize);
+				resizeObserver.disconnect();
 				terminal.dispose();
 				fitAddon.dispose();
 				abortController.abort(ABORT_REASON);
@@ -102,7 +103,7 @@
 	{#await importXterm()}
 		<p>Loading terminal...</p>
 	{:then mod}
-		<div style="display: contents;" {@attach terminal(mod)}></div>
+		<div {@attach terminal(mod)}></div>
 	{:catch error}
 		<div>Error loading terminal: {error.message}</div>
 	{/await}
