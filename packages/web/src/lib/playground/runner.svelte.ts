@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import { printAnsi } from './print-ansi';
 
 const createRunnerDocument = (id: string, userCode: string) => `
     <!doctype html>
@@ -6,6 +7,7 @@ const createRunnerDocument = (id: string, userCode: string) => `
         <head>
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <link rel="modulepreload" href="https://esm.sh/stql@0.3.1" />
             <script type="importmap">
                 {
                     "imports": {
@@ -87,17 +89,30 @@ function isMessage(runId: string, data: unknown): data is Message {
 export class Runner {
 	private cleanupLastRun: (() => void) | null = null;
 
-	run(code: string) {
-		// biome-ignore lint/style/useConst: wrong
-		let messages = $state<Message[]>([]);
+	private terminalWritable: WritableStream<string>;
+	public terminalStream: ReadableStream<string>;
 
-		if (!browser) {
-			return {
-				get messages() {
-					return messages;
-				},
-			};
-		}
+	constructor() {
+		const { readable, writable } = new TransformStream<string, string>();
+		this.terminalWritable = writable;
+		this.terminalStream = readable;
+	}
+
+	private async writeMessage(message: Message) {
+		const writer = this.terminalWritable.getWriter();
+		await writer.ready;
+
+		const content =
+			message.type === 'console'
+				? message.args.map(printAnsi).join(' ')
+				: `\x1B[41m${message.message}\x1B[0m`;
+
+		await writer.write(`${content}\n\n`);
+		writer.releaseLock();
+	}
+
+	run(code: string) {
+		if (!browser) return;
 
 		this.cleanupLastRun?.();
 		const frame = document.createElement('iframe');
@@ -107,10 +122,10 @@ export class Runner {
 
 		const runId = crypto.randomUUID();
 
-		function handleMessage(event: MessageEvent) {
+		const handleMessage = (event: MessageEvent) => {
 			if (!event.isTrusted || !isMessage(runId, event.data)) return;
-			messages.push(event.data);
-		}
+			this.writeMessage(event.data);
+		};
 
 		window.addEventListener('message', handleMessage);
 
@@ -125,15 +140,11 @@ export class Runner {
 			document.body.removeChild(frame);
 			window.removeEventListener('message', handleMessage);
 		};
-
-		return {
-			get messages() {
-				return messages;
-			},
-		};
 	}
 
 	cleanup() {
 		this.cleanupLastRun?.();
+		this.terminalWritable.close();
+		this.terminalStream.cancel();
 	}
 }

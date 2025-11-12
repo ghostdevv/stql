@@ -2,9 +2,7 @@
 	import { javascript } from '@codemirror/lang-javascript';
 	import { editorTheme, highlightTheme } from './theme';
 	import { EditorState } from '@codemirror/state';
-	import { ansiTheme } from './ansi-theme';
 	import { untrack } from 'svelte';
-	import { ansi } from './ansi';
 	import {
 		defaultKeymap,
 		history,
@@ -34,57 +32,42 @@
 	interface Props {
 		value?: string;
 		onChange?: (value: string) => unknown;
-		terminal?: boolean;
 	}
 
-	let { value = $bindable(''), ...props }: Props = $props();
+	let { value = $bindable(''), onChange }: Props = $props();
 
 	function codemirror(root: HTMLDivElement) {
-		const terminal = untrack(() => props.terminal);
 		const initialValue = untrack(() => value);
 
 		const editor = new EditorView({
 			parent: root!,
-			scrollTo: terminal
-				? EditorView.scrollIntoView(initialValue.length, { y: 'end' })
-				: undefined,
 			state: EditorState.create({
 				doc: untrack(() => initialValue),
-				extensions: terminal
-					? [
-							editorTheme,
-							ansiTheme,
-							ansi(),
-							syntaxHighlighting(highlightTheme),
-							EditorState.readOnly.of(true),
-							EditorView.editable.of(false),
-							EditorView.contentAttributes.of({ tabindex: '0' }),
-						]
-					: [
-							editorTheme,
-							history(),
-							indentOnInput(),
-							crosshairCursor(),
-							lineNumbers(),
-							foldGutter(),
-							bracketMatching(),
-							highlightActiveLine(),
-							highlightActiveLineGutter(),
-							highlightSelectionMatches(),
-							javascript(),
-							syntaxHighlighting(highlightTheme),
-							EditorView.updateListener.of((newValue) => {
-								value = newValue.state.doc.toString();
-								props.onChange?.(value);
-							}),
-							keymap.of([
-								...defaultKeymap,
-								...searchKeymap,
-								...historyKeymap,
-								...foldKeymap,
-								indentWithTab,
-							]),
-						],
+				extensions: [
+					editorTheme,
+					history(),
+					indentOnInput(),
+					crosshairCursor(),
+					lineNumbers(),
+					foldGutter(),
+					bracketMatching(),
+					highlightActiveLine(),
+					highlightActiveLineGutter(),
+					highlightSelectionMatches(),
+					javascript(),
+					syntaxHighlighting(highlightTheme),
+					EditorView.updateListener.of((newValue) => {
+						value = newValue.state.doc.toString();
+						onChange?.(value);
+					}),
+					keymap.of([
+						...defaultKeymap,
+						...searchKeymap,
+						...historyKeymap,
+						...foldKeymap,
+						indentWithTab,
+					]),
+				],
 			}),
 		});
 
@@ -97,16 +80,6 @@
 						insert: value,
 					},
 				});
-
-				if (terminal) {
-					editor.dispatch({
-						effects: [
-							EditorView.scrollIntoView(editor.state.doc.length, {
-								y: 'end',
-							}),
-						],
-					});
-				}
 			}
 		});
 

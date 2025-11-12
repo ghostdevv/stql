@@ -16,7 +16,7 @@ const config = {
 
 	compilerOptions: {
 		experimental: {
-			async: false,
+			async: true,
 		},
 	},
 };

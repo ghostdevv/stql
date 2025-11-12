@@ -71,6 +71,12 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.1
         version: 6.2.1(svelte@5.43.5)(vite@7.2.2)
+      '@xterm/addon-fit':
+        specifier: ^0.10.0
+        version: 0.10.0(@xterm/xterm@5.5.0)
+      '@xterm/xterm':
+        specifier: ^5.5.0
+        version: 5.5.0
       dedent:
         specifier: ^1.7.0
         version: 1.7.0
@@ -801,6 +807,14 @@ packages:
 
   '@vitest/utils@4.0.8':
     resolution: {integrity: sha512-pdk2phO5NDvEFfUTxcTP8RFYjVj/kfLSPIN5ebP2Mu9kcIMeAQTbknqcFEyBcC4z2pJlJI9aS5UQjcYfhmKAow==}
+
+  '@xterm/addon-fit@0.10.0':
+    resolution: {integrity: sha512-UFYkDm4HUahf2lnEyHvio51TNGiLK66mqP2JoATy7hRZeXaGMRDr00JiSF7m63vR5WKATF605yEggJKsw0JpMQ==}
+    peerDependencies:
+      '@xterm/xterm': ^5.0.0
+
+  '@xterm/xterm@5.5.0':
+    resolution: {integrity: sha512-hqJHYaQb5OptNunnyAnkHyM8aCjZ1MEIDTQu1iIbbTD/xops91NB5yq1ZK/dC2JDbVWtF23zUtl9JE2NqwT87A==}
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
@@ -2283,6 +2297,12 @@ snapshots:
     dependencies:
       '@vitest/pretty-format': 4.0.8
       tinyrainbow: 3.0.3
+
+  '@xterm/addon-fit@0.10.0(@xterm/xterm@5.5.0)':
+    dependencies:
+      '@xterm/xterm': 5.5.0
+
+  '@xterm/xterm@5.5.0': {}
 
   acorn@8.15.0: {}
 
