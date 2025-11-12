@@ -18,8 +18,13 @@
 
 	let terminalContent = $derived(
 		messages
-			.filter((message) => message.type === 'console')
-			.map((message) => message.args.map(printAnsi).join(' '))
+			.map((message) => {
+				if (message.type === 'console') {
+					return message.args.map(printAnsi).join(' ');
+				}
+
+				return `\x1B[41m${message.message}\x1B[0m`;
+			})
 			.join('\n\n'),
 	);
 

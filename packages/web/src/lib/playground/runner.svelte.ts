@@ -20,13 +20,32 @@ const createRunnerDocument = (id: string, userCode: string) => `
             <script type="module">
                 const METHODS = ['log', 'warn', 'error', 'info'];
 
+                function send(type, data) {
+                    parent.postMessage({
+                        id: ${JSON.stringify(id)},
+                        type,
+                        ts: Date.now(),
+                        ...data
+                    }, ${JSON.stringify(window.origin)});
+                }
+
                 for (const method of METHODS) {
                     const original = console[method];
                     console[method] = function(...args) {
-                        parent.postMessage({ id: ${JSON.stringify(id)}, type: 'console', ts: Date.now(), method, args }, ${JSON.stringify(window.origin)});
+                        try {
+                            send('console', { method, args });
+                        } catch (error) {
+                            console.error('failed to send console message:', error);
+                            send('error', { message: error.message });
+                        }
+
                         return original.call(this, ...args);
                     }
                 }
+
+                window.addEventListener('error', (event) => {
+                    send('error', { message: event.message });
+                });
             </script>
 
             <script type="module">
@@ -44,7 +63,14 @@ interface ConsoleMessage {
 	args: unknown[];
 }
 
-type Message = ConsoleMessage;
+interface ErrorMessage {
+	id: string;
+	type: 'error';
+	ts: number;
+	message: string;
+}
+
+type Message = ConsoleMessage | ErrorMessage;
 
 function isMessage(runId: string, data: unknown): data is Message {
 	return (
@@ -54,7 +80,7 @@ function isMessage(runId: string, data: unknown): data is Message {
 		data.id === runId &&
 		'type' in data &&
 		typeof data.type === 'string' &&
-		['console'].includes(data.type)
+		['console', 'error'].includes(data.type)
 	);
 }
 
@@ -63,7 +89,7 @@ export class Runner {
 
 	run(code: string) {
 		// biome-ignore lint/style/useConst: wrong
-		let messages = $state<ConsoleMessage[]>([]);
+		let messages = $state<Message[]>([]);
 
 		if (!browser) {
 			return {
