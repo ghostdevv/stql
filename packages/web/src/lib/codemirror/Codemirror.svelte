@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { autocompletion } from '@codemirror/autocomplete';
 	import { javascript } from '@codemirror/lang-javascript';
 	import { editorTheme, highlightTheme } from './theme';
 	import { EditorState } from '@codemirror/state';
@@ -54,6 +55,7 @@
 					highlightActiveLine(),
 					highlightActiveLineGutter(),
 					highlightSelectionMatches(),
+					autocompletion(),
 					javascript(),
 					syntaxHighlighting(highlightTheme),
 					EditorView.updateListener.of((newValue) => {
