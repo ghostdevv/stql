@@ -37,13 +37,19 @@
 		terminal?: boolean;
 	}
 
-	let { value = $bindable(''), onChange, terminal }: Props = $props();
+	let { value = $bindable(''), ...props }: Props = $props();
 
 	function codemirror(root: HTMLDivElement) {
+		const terminal = untrack(() => props.terminal);
+		const initialValue = untrack(() => value);
+
 		const editor = new EditorView({
 			parent: root!,
+			scrollTo: terminal
+				? EditorView.scrollIntoView(initialValue.length, { y: 'end' })
+				: undefined,
 			state: EditorState.create({
-				doc: untrack(() => value),
+				doc: untrack(() => initialValue),
 				extensions: terminal
 					? [
 							editorTheme,
@@ -69,7 +75,7 @@
 							syntaxHighlighting(highlightTheme),
 							EditorView.updateListener.of((newValue) => {
 								value = newValue.state.doc.toString();
-								onChange?.(value);
+								props.onChange?.(value);
 							}),
 							keymap.of([
 								...defaultKeymap,
@@ -91,6 +97,16 @@
 						insert: value,
 					},
 				});
+
+				if (terminal) {
+					editor.dispatch({
+						effects: [
+							EditorView.scrollIntoView(editor.state.doc.length, {
+								y: 'end',
+							}),
+						],
+					});
+				}
 			}
 		});
 
