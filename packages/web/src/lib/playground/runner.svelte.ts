@@ -1,3 +1,4 @@
+import { ClearTerminal, type TerminalStreamValue } from './Terminal.svelte';
 import { browser } from '$app/environment';
 import { printAnsi } from './print-ansi';
 
@@ -89,30 +90,39 @@ function isMessage(runId: string, data: unknown): data is Message {
 export class Runner {
 	private cleanupLastRun: (() => void) | null = null;
 
-	private terminalWritable: WritableStream<string>;
-	public terminalStream: ReadableStream<string>;
+	private terminalWritable: WritableStream<TerminalStreamValue>;
+	public terminalStream: ReadableStream<TerminalStreamValue>;
 
 	constructor() {
-		const { readable, writable } = new TransformStream<string, string>();
+		const { readable, writable } = new TransformStream<
+			TerminalStreamValue,
+			TerminalStreamValue
+		>();
+
 		this.terminalWritable = writable;
 		this.terminalStream = readable;
 	}
 
-	private async writeMessage(message: Message) {
+	private async writeRaw(data: TerminalStreamValue) {
 		const writer = this.terminalWritable.getWriter();
 		await writer.ready;
+		await writer.write(data);
+		writer.releaseLock();
+	}
 
+	private async writeMessage(message: Message) {
 		const content =
 			message.type === 'console'
 				? message.args.map(printAnsi).join(' ')
 				: `\x1B[41m${message.message}\x1B[0m`;
 
-		await writer.write(`${content}\n\n`);
-		writer.releaseLock();
+		await this.writeRaw(`${content}\n\n`);
 	}
 
 	run(code: string) {
 		if (!browser) return;
+
+		this.writeRaw(ClearTerminal);
 
 		this.cleanupLastRun?.();
 		const frame = document.createElement('iframe');

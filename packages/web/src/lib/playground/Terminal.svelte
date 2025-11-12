@@ -1,3 +1,8 @@
+<script lang="ts" module>
+	export const ClearTerminal = Symbol.for('ClearTerminal');
+	export type TerminalStreamValue = string | typeof ClearTerminal;
+</script>
+
 <script lang="ts">
 	import type { FitAddon } from '@xterm/addon-fit';
 	import type { Terminal } from '@xterm/xterm';
@@ -5,7 +10,7 @@
 	import '@xterm/xterm/css/xterm.css';
 
 	interface Props {
-		stream: ReadableStream<string>;
+		stream: ReadableStream<TerminalStreamValue>;
 	}
 
 	const { stream }: Props = $props();
@@ -58,10 +63,20 @@
 			const ABORT_REASON = 'terminal component destroyed';
 			const abortController = new AbortController();
 
-			const writer = new WritableStream<string>({
+			const writer = new WritableStream<TerminalStreamValue>({
 				write(data) {
-					console.log('writing', data);
-					terminal.write(data);
+					if (data === ClearTerminal) {
+						// workaround due to this not being released yet
+						// https://github.com/xtermjs/xterm.js/pull/5224
+						// terminal.write(`\x1b[${terminal.rows};1H`);
+						// terminal.write('\n'.repeat(terminal.rows));
+						// terminal.write('\x1b[2J\x1b[H');
+						terminal.writeln(
+							'\x1b[3m\x1b[90mTerminal "cleared"\x1b[0m\n',
+						);
+					} else {
+						terminal.write(data);
+					}
 				},
 			});
 
