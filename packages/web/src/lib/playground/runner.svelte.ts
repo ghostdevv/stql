@@ -81,10 +81,12 @@ export class Runner {
 
 		const runId = crypto.randomUUID();
 
-		window.addEventListener('message', (event) => {
+		function handleMessage(event: MessageEvent) {
 			if (!event.isTrusted || !isMessage(runId, event.data)) return;
 			messages.push(event.data);
-		});
+		}
+
+		window.addEventListener('message', handleMessage);
 
 		const runnerDocument = createRunnerDocument(runId, code);
 		const blob = new Blob([runnerDocument], { type: 'text/html' });
@@ -95,6 +97,7 @@ export class Runner {
 			frame.src = '';
 			URL.revokeObjectURL(url);
 			document.body.removeChild(frame);
+			window.removeEventListener('message', handleMessage);
 		};
 
 		return {
