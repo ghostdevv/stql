@@ -40,6 +40,7 @@
 		return (node: HTMLDivElement) => {
 			const terminal = new mod.Terminal({
 				convertEol: true,
+				disableStdin: true,
 				theme: {
 					background: '#212123',
 					yellow: '#f29e74',
