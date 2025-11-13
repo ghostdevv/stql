@@ -22,7 +22,8 @@
 	<p>
 		A <strong>S</strong>imple <strong>T</strong>ag <strong>Q</strong>uery
 		<strong>L</strong>anguage for building user friendly enhanced search
-		boxes.
+		boxes. Website very much work in progress.
+		<a href="https://github.com/ghostdevv/stql">GitHub</a>
 	</p>
 </section>
 
