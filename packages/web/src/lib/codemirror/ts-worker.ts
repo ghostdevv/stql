@@ -11,9 +11,9 @@ import {
 Comlink.expose(
 	createWorker(async () => {
 		const compilerOpts: ts.CompilerOptions = {
-			target: ts.ScriptTarget.ESNext,
-			module: ts.ModuleKind.ESNext,
-			lib: ['dom'],
+			target: ts.ScriptTarget.ES2022,
+			module: ts.ModuleKind.ES2022,
+			lib: ['ES2022', 'DOM'],
 			checkJs: true,
 			allowJs: true,
 		};
