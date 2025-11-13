@@ -47,8 +47,11 @@
 	let { value = $bindable(''), onChange }: Props = $props();
 
 	async function initialiseTSWorker() {
-		const workerModule = new URL('./ts-worker.ts', import.meta.url);
-		const rawWorker = new Worker(workerModule, { type: 'module' });
+		const rawWorker = new Worker(
+			new URL('./ts-worker.ts', import.meta.url),
+			{ type: 'module' },
+		);
+
 		const worker = Comlink.wrap(rawWorker) as WorkerShape;
 		await worker.initialize();
 		return worker;
