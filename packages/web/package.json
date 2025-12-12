@@ -13,7 +13,6 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@braebo/ansi": "jsr:^0.2.0",
 		"@codemirror/autocomplete": "^6.19.1",
 		"@codemirror/commands": "^6.10.0",
 		"@codemirror/lang-javascript": "^6.2.4",
@@ -35,6 +34,7 @@
 		"comlink": "^4.4.2",
 		"dedent": "^1.7.0",
 		"ghostsui": "2.0.0-beta.5",
+		"node-inspect-extracted": "^3.2.2",
 		"paneforge": "^1.0.2",
 		"runed": "^0.36.0",
 		"svelte": "^5.43.6",
