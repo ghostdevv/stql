@@ -43,8 +43,6 @@
 				disableStdin: true,
 				theme: {
 					background: '#212123',
-					yellow: '#f29e74',
-					magenta: '#f06897',
 					red: '#f26c4b',
 				},
 			});
