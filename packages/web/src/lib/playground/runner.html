@@ -30,6 +30,20 @@
 				);
 			}
 
+			function sendError(error) {
+				if (error instanceof Error) {
+					let message = error.message;
+					message += error.stack ? `\n\n${error.stack}` : '';
+					message = message.replaceAll(
+						__RUNNER_CODE__,
+						'__user_code',
+					);
+					send('error', { message });
+				} else {
+					send('error', { message: String(error) });
+				}
+			}
+
 			for (const method of METHODS) {
 				const original = console[method];
 				console[method] = function (...args) {
@@ -37,7 +51,7 @@
 						send('console', { method, args });
 					} catch (error) {
 						console.error('failed to send console message:', error);
-						send('error', { message: error.message });
+						sendError(error);
 					}
 
 					return original.call(this, ...args);
@@ -45,12 +59,12 @@
 			}
 
 			window.addEventListener('error', (event) => {
-				send('error', { message: event.message });
+				sendError(event.error);
 			});
 		</script>
 
 		<script type="module">
-			__RUNNER_CODE__;
+			await import(__RUNNER_CODE__);
 		</script>
 	</body>
 </html>

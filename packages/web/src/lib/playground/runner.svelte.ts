@@ -64,7 +64,7 @@ export class Runner {
 		await this.writeRaw(`${content}\n\n`);
 	}
 
-	run(code: string) {
+	run(rawCode: string) {
 		if (!browser) return;
 
 		this.writeRaw(ClearTerminal);
@@ -87,7 +87,12 @@ export class Runner {
 		const runnerDocument = runnerHTML
 			.replaceAll('__RUNNER_ID__', JSON.stringify(runId))
 			.replaceAll('__RUNNER_ORIGIN__', JSON.stringify(location.origin))
-			.replaceAll('__RUNNER_CODE__', code);
+			.replaceAll(
+				'__RUNNER_CODE__',
+				JSON.stringify(
+					`data:application/javascript;base64,${btoa(rawCode)}`,
+				),
+			);
 
 		const blob = new Blob([runnerDocument], { type: 'text/html' });
 		const url = URL.createObjectURL(blob);
