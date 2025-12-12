@@ -41,6 +41,7 @@
 			const terminal = new mod.Terminal({
 				convertEol: true,
 				disableStdin: true,
+				fontFamily: 'monospace',
 				theme: {
 					background: '#212123',
 					yellow: '#f29e74',
