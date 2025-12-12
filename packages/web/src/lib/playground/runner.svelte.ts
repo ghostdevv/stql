@@ -1,62 +1,7 @@
 import { ClearTerminal, type TerminalStreamValue } from './Terminal.svelte';
 import { browser } from '$app/environment';
+import runnerHTML from './runner.html?raw';
 import { printAnsi } from './print-ansi';
-
-const createRunnerDocument = (id: string, userCode: string) => `
-    <!doctype html>
-    <html lang="en">
-        <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <link rel="modulepreload" href="https://esm.sh/stql@0.3.1" />
-            <script type="importmap">
-                {
-                    "imports": {
-                        "stql": "https://esm.sh/stql@0.3.1"
-                    }
-                }
-            </script>
-        </head>
-        <body>
-            <p>running</p>
-
-            <script type="module">
-                const METHODS = ['log', 'warn', 'error', 'info'];
-
-                function send(type, data) {
-                    parent.postMessage({
-                        id: ${JSON.stringify(id)},
-                        type,
-                        ts: Date.now(),
-                        ...data
-                    }, ${JSON.stringify(window.origin)});
-                }
-
-                for (const method of METHODS) {
-                    const original = console[method];
-                    console[method] = function(...args) {
-                        try {
-                            send('console', { method, args });
-                        } catch (error) {
-                            console.error('failed to send console message:', error);
-                            send('error', { message: error.message });
-                        }
-
-                        return original.call(this, ...args);
-                    }
-                }
-
-                window.addEventListener('error', (event) => {
-                    send('error', { message: event.message });
-                });
-            </script>
-
-            <script type="module">
-                ${userCode}
-            </script>
-        </body>
-    </html>
-`;
 
 interface ConsoleMessage {
 	id: string;
@@ -139,7 +84,11 @@ export class Runner {
 
 		window.addEventListener('message', handleMessage);
 
-		const runnerDocument = createRunnerDocument(runId, code);
+		const runnerDocument = runnerHTML
+			.replaceAll('__RUNNER_ID__', JSON.stringify(runId))
+			.replaceAll('__RUNNER_ORIGIN__', JSON.stringify(location.origin))
+			.replaceAll('__RUNNER_CODE__', code);
+
 		const blob = new Blob([runnerDocument], { type: 'text/html' });
 		const url = URL.createObjectURL(blob);
 		frame.src = url;
