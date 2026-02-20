@@ -37,7 +37,7 @@
 		"node-inspect-extracted": "^3.2.2",
 		"paneforge": "^1.0.2",
 		"runed": "^0.36.0",
-		"svelte": "^5.43.6",
+		"svelte": "^5.51.5",
 		"svelte-check": "^4.3.3",
 		"typescript": "^5.9.3",
 		"vite": "^7.1.10",
